@@ -7,10 +7,12 @@ backend/__pycache__
 .pnp.js
 
 # testing
-/coverage
+frontend/coverage
+backend/coverage
 
 # production
-/build
+frontend/build
+backend/build
 
 # misc
 .DS_Store
