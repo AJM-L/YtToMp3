@@ -1,8 +1,9 @@
 # dependencies
-/node_modules
-/venv
+frontend/node_modules
+backend/venv
+backend/__pycache__
+
 /.pnp
-/__pycache__
 .pnp.js
 
 # testing
