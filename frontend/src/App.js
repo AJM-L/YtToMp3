@@ -5,16 +5,26 @@ function App() {
     const [url, setUrl] = useState('');
     const [isConverting, setIsConverting] = useState(false);
     const [downloaded, setDownloaded] = useState(false);
+    const [fileType, setFileType] = useState('mp3');
 
     const handleDownload = async () => {
         setDownloaded(false);
         setIsConverting(true);
-        await axios.post('/download', { url: url })
-            .then(response => {
-                console.log(response.data);
-                return response.data;
-            })
-            .catch(error => console.error("Error converting:", error));
+        if (fileType === 'mp3') {
+            await axios.post('/download', { url: url })
+                .then(response => {
+                    console.log(response.data);
+                    return response.data;
+                })
+                .catch(error => console.error("Error converting:", error));
+        } else {
+            await axios.post('/download-video', { url: url })
+                .then(response => {
+                    console.log(response.data);
+                    return response.data;
+                })
+                .catch(error => console.error("Error downloading video:", error));
+        }
         setIsConverting(false);
         setDownloaded(true);
     }
@@ -39,7 +49,7 @@ function App() {
                 marginBottom: '30px',
                 color: '#e53935'
             }}>
-                YouTube to MP3 Converter
+                YouTube Converter
             </h1>
             
             <div style={{
@@ -68,6 +78,45 @@ function App() {
                         }}
                     />
                     
+                    <div style={{ 
+                        display: 'flex', 
+                        gap: '15px', 
+                        marginBottom: '10px',
+                        width: '100%', 
+                        justifyContent: 'center' 
+                    }}>
+                        <label style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '5px',
+                            cursor: 'pointer' 
+                        }}>
+                            <input 
+                                type="radio" 
+                                name="fileType" 
+                                value="mp3" 
+                                checked={fileType === 'mp3'} 
+                                onChange={() => setFileType('mp3')} 
+                            />
+                            MP3 (Audio)
+                        </label>
+                        <label style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '5px',
+                            cursor: 'pointer' 
+                        }}>
+                            <input 
+                                type="radio" 
+                                name="fileType" 
+                                value="mp4" 
+                                checked={fileType === 'mp4'} 
+                                onChange={() => setFileType('mp4')} 
+                            />
+                            MP4 (Video)
+                        </label>
+                    </div>
+                    
                     <button 
                         onClick={handleDownload} 
                         disabled={isConverting || !url} 
@@ -82,18 +131,18 @@ function App() {
                             fontWeight: 'bold'
                         }}
                     >
-                        {isConverting ? 'Converting...' : 'Convert to MP3'}
+                        {isConverting ? 'Processing...' : fileType === 'mp3' ? 'Convert to MP3' : 'Download MP4'}
                     </button>
                     
                     {isConverting && 
                         <p style={{ color: '#2196f3', fontWeight: 'bold' }}>
-                            Converting your video to MP3...
+                            {fileType === 'mp3' ? 'Converting your video to MP3...' : 'Downloading your MP4 video...'}
                         </p>
                     }
                     
                     {downloaded && 
                         <p style={{ color: '#4caf50', fontWeight: 'bold' }}>
-                            Success! Your MP3 file is ready in the downloads folder.
+                            Success! Your {fileType.toUpperCase()} file is ready in the downloads folder.
                         </p>
                     }
                 </div>

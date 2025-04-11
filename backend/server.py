@@ -26,10 +26,24 @@ def download():
     except Exception as e:
         return jsonify({'message': str(e)})
 
+@app.route('/download-video', methods=['POST'])
+def download_video():
+    try:
+        url = request.json['url']
+        yt = YouTube(url)
+        video = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
+        title = yt.streams[0].title
+        video.download(output_path='./downloads', filename=f"{title}.mp4")
+        return jsonify({'message': 'Video downloaded!'})
+    except Exception as e:
+        return jsonify({'message': str(e)})
+
 @app.route('/clear', methods=['POST'])
 def clear():
     try:
         for file in glob.glob('./downloads/*.mp3'):
+            os.remove(file)
+        for file in glob.glob('./downloads/*.mp4'):
             os.remove(file)
         return jsonify({'message': 'Downloads folder cleared!'})
     except Exception as e:
